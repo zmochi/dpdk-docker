@@ -27,8 +27,6 @@ err() {
 	exit "$2"
 }
 
-set -x
-
 build_img() { # args: directory containing Dockerfile, image name, username (for machine non-root user)
 	DIR=$1
 	IMG_NAME=$2
@@ -71,8 +69,6 @@ start_container() { # args:
 		"$IMG_NAME" || err "Couldn't run container image $IMG_NAME" 1
 
 	# docker exec "$CONTAINER_NAME" # TODO: set NIC gateway here if $NET_GATEWAY is not empty
-
-	cd -
 }
 
 host1_NIC_IP=10.1.1.10

@@ -13,7 +13,7 @@ Attach:
 docker attach fw
 ```
 
-Enable hugepages, to run DPDK programs (as root):
+Enable hugepages, to run DPDK programs (as root, password for `fw` user is `fw`):
 ```bash
 source /dpdk/enable_hugepages.sh
 ```
