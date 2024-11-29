@@ -59,7 +59,7 @@ start_container() { # args:
 	USER=$7
 	VOL_NAME="$CONTAINER_NAME""_data"
 
-	docker run --privileged -dit \
+	docker run --rm --privileged -dit \
 		--platform=linux/amd64 \
 		--name "$CONTAINER_NAME" \
 		--hostname "$CONTAINER_NAME" \
