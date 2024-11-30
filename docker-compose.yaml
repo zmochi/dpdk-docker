@@ -1,0 +1,104 @@
+services:
+  firewall:
+    init: true
+    command: sleep infinity
+    tty: true
+    stdin_open: true
+
+    image: fw_img
+    platform: ${FW_PLATFORM}
+    privileged: true
+    container_name: ${FW_NAME}
+    hostname: ${FW_NAME}
+    environment:
+      USERNAME: ${FW_USER}
+      PASSWD: ${FW_PASS}
+    volumes:
+      - fw-data:/home/${FW_NAME}
+    build: 
+      dockerfile: ./fw.Dockerfile
+      args:
+        UBUNTU_VER: ${FW_UBUNTU_VER}
+      platforms: 
+        - ${FW_PLATFORM}
+
+    networks:
+      int_network:
+        ipv4_address: ${FW_INT_IPADDR}
+
+      ext_network:
+        ipv4_address: ${FW_EXT_IPADDR}
+
+      internet: {}
+
+
+  int_host:
+    init: true
+    command: sleep infinity
+    tty: true
+    stdin_open: true
+
+    image: host_img
+    container_name: ${INT_HOST_NAME}
+    hostname: ${INT_HOST_NAME}
+    environment:
+      USERNAME: ${INT_HOST_NAME}
+      PASSWD: ${FW_PASS}
+    volumes:
+      - int-host-data:/home/${INT_HOST_NAME}
+    build: 
+      dockerfile: ./host.Dockerfile
+
+    networks:
+      int_network:
+        ipv4_address: ${INT_HOST_IPADDR}
+
+      internet: {}
+
+
+  ext_host:
+    init: true
+    command: sleep infinity
+    tty: true
+    stdin_open: true
+
+    image: host_img
+    container_name: ${EXT_HOST_NAME}
+    hostname: ${EXT_HOST_NAME}
+    environment:
+      USERNAME: ${EXT_HOST_NAME}
+      PASSWD: ${FW_PASS}
+    volumes:
+      - ext-host-data:/home/${EXT_HOST_NAME}
+    build: 
+      dockerfile: ./host.Dockerfile
+
+    networks:
+      ext_network:
+        ipv4_address: ${EXT_HOST_IPADDR}
+
+      internet: {}
+
+networks:
+  internet: # connection to regular internet
+
+  int_network:
+    internal: true
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${INT_SUBNET}
+  ext_network:
+    internal: true
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${EXT_SUBNET}
+
+volumes:
+  fw-data: {}
+  int-host-data: {}
+  ext-host-data: {}
+
