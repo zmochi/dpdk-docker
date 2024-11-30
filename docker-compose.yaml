@@ -10,6 +10,8 @@ services:
     privileged: true
     container_name: ${FW_NAME}
     hostname: ${FW_NAME}
+    sysctls: 
+      - net.ipv4.ip_forward=1
     environment:
       USERNAME: ${FW_USER}
       PASSWD: ${FW_PASS}
@@ -39,21 +41,27 @@ services:
     stdin_open: true
 
     image: host_img
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
     container_name: ${INT_HOST_NAME}
     hostname: ${INT_HOST_NAME}
     environment:
       USERNAME: ${INT_HOST_NAME}
       PASSWD: ${FW_PASS}
+      SUBNET: ${EXT_SUBNET}
+      DEFAULT_GATEWAY: ${FW_INT_IPADDR}
     volumes:
       - int-host-data:/home/${INT_HOST_NAME}
     build: 
       dockerfile: ./host.Dockerfile
+      args:
+        USERNAME: ${INT_HOST_NAME}
 
     networks:
       int_network:
         ipv4_address: ${INT_HOST_IPADDR}
-
-      internet: {}
 
 
   ext_host:
@@ -63,39 +71,47 @@ services:
     stdin_open: true
 
     image: host_img
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
     container_name: ${EXT_HOST_NAME}
     hostname: ${EXT_HOST_NAME}
     environment:
       USERNAME: ${EXT_HOST_NAME}
       PASSWD: ${FW_PASS}
+      SUBNET: ${INT_SUBNET}
+      DEFAULT_GATEWAY: ${FW_EXT_IPADDR}
     volumes:
       - ext-host-data:/home/${EXT_HOST_NAME}
     build: 
       dockerfile: ./host.Dockerfile
+      args:
+        USERNAME: ${EXT_HOST_NAME}
 
     networks:
       ext_network:
         ipv4_address: ${EXT_HOST_IPADDR}
 
-      internet: {}
 
 networks:
   internet: # connection to regular internet
 
   int_network:
-    internal: true
+    # internal: true
     driver: bridge
     ipam:
-      driver: default
       config:
         - subnet: ${INT_SUBNET}
+          # gateway: ${FW_INT_IPADDR}
+
   ext_network:
-    internal: true
+    # internal: true
     driver: bridge
     ipam:
-      driver: default
       config:
         - subnet: ${EXT_SUBNET}
+          # gateway: ${FW_EXT_IPADDR}
 
 volumes:
   fw-data: {}

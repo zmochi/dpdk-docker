@@ -3,10 +3,10 @@ Start all containers and build if needed
 docker compose up -d
 ```
 
-Start only fw (can replace fw with host1/host2) container
+Start only firewall (can replace firewall with ext_host/int_host) container
 
 ```bash
-docker compose up fw -d
+docker compose up firewall -d
 ```
 
 Attach:

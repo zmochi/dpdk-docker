@@ -24,10 +24,11 @@ meson \
 ninja-build \
 python3-pyelftools \
 pkg-config \
-#linux-headers-$(uname -r) \ 
 vim \
 libpcap-dev \
 man-db \
+tcpdump \
+net-tools \
 unminimize
 
 RUN yes | unminimize
@@ -37,6 +38,9 @@ RUN useradd --create-home --shell /bin/bash $USERNAME
 RUN adduser $USERNAME sudo
 # set password for user, WARNING: insecure
 RUN echo "${USERNAME}:fw" | chpasswd
+
+# ipv4 forwarding
+# RUN sysctl -w net.ipv4.ip_forward=1
 
 WORKDIR /dpdk
 
