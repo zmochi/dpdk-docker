@@ -29,7 +29,8 @@ libpcap-dev \
 man-db \
 tcpdump \
 net-tools \
-unminimize
+unminimize && \
+apt-get clean
 
 RUN yes | unminimize
 
@@ -38,9 +39,6 @@ RUN useradd --create-home --shell /bin/bash $USERNAME
 RUN adduser $USERNAME sudo
 # set password for user, WARNING: insecure
 RUN echo "${USERNAME}:fw" | chpasswd
-
-# ipv4 forwarding
-# RUN sysctl -w net.ipv4.ip_forward=1
 
 WORKDIR /dpdk
 
@@ -56,6 +54,11 @@ WORKDIR build
 RUN ninja
 RUN meson install
 RUN ldconfig
+
+RUN apt-get install -y \
+neovim \
+unzip \
+zip
 
 COPY ./enable_hugepages.sh /dpdk/enable_hugepages.sh
 

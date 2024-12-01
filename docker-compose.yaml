@@ -1,7 +1,6 @@
 services:
   firewall:
     init: true
-    command: sleep infinity
     tty: true
     stdin_open: true
 
@@ -36,15 +35,12 @@ services:
 
   int_host:
     init: true
-    command: sleep infinity
     tty: true
     stdin_open: true
 
     image: host_img
-    privileged: true
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
     container_name: ${INT_HOST_NAME}
     hostname: ${INT_HOST_NAME}
     environment:
@@ -66,15 +62,12 @@ services:
 
   ext_host:
     init: true
-    command: sleep infinity
     tty: true
     stdin_open: true
 
     image: host_img
-    privileged: true
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
     container_name: ${EXT_HOST_NAME}
     hostname: ${EXT_HOST_NAME}
     environment:
@@ -95,23 +88,25 @@ services:
 
 
 networks:
-  internet: # connection to regular internet
+  internet: {} # connection to regular internet
 
   int_network:
     # internal: true
     driver: bridge
+    driver_opts:
+      com.docker.network.container_iface_prefix: internal
     ipam:
       config:
         - subnet: ${INT_SUBNET}
-          # gateway: ${FW_INT_IPADDR}
 
   ext_network:
     # internal: true
     driver: bridge
+    driver_opts:
+      com.docker.network.container_iface_prefix: external
     ipam:
       config:
         - subnet: ${EXT_SUBNET}
-          # gateway: ${FW_EXT_IPADDR}
 
 volumes:
   fw-data: {}
